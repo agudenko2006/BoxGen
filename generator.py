@@ -52,6 +52,18 @@ def lid():
     return svg
 
 def main():
+    common_x = x + z*4 + thickness*12
+    common_y = y*2 + z*3 +thickness*8
+    global sheet_x, sheet_y, center_x, center_y
+    if common_x > common_y:
+        sheet_x, sheet_y = sheet_y, sheet_x
+        center_x = sheet_x/2
+        center_y = sheet_y/2
+    center_y = sheet_y -y/2 -z -thickness*2 - 15
+    if(common_y > sheet_y):
+        return False
+    if(common_x > sheet_x):
+        return False
     svg = f'<svg width="{sheet_x}mm" height="{sheet_y}mm" viewBox="0 0 {sheet_x} {sheet_y}">\n'
     svg += base()
     svg += lid()
@@ -59,6 +71,7 @@ def main():
     file = open('output.svg', 'w')
     file.write(svg)
     file.close()
+    return True
 
 if __name__ == '__main__':
     main()
