@@ -12,4 +12,5 @@ read printer
 echo "export TOKEN=\"$token\"">>~/.bashrc
 echo "export PRINTER=\"$printer\"">>~/.bashrc
 
+source ~/.bashrc
 echo "Now you can run \"python3 bot.py\" to start the bot."
