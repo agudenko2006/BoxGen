@@ -21,15 +21,20 @@ def rect(name, x, y, width, height):
     y += center_y - height/2
     return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" id="rect{name}" style="{css}"/>\n'
 
-def trapezoid(name, x, y, width, height, l = thickness, r = thickness, mirror = False):
+def trapezoid(name, x, y, width, height, l = thickness, r = thickness, mirror = False, rotate90 = False):
     y *= -1
     x += center_x - width/2
     y += center_y - height/2
-    x1, x2, x3, x4 = x, x+l, x+ width-r, x+width
-    y1, y2 = y, y+height
-    if mirror:
-        y1, y2 = y2, y1
-    return f'<polygon points="{x2} {y1}, {x3} {y1}, {x4} {y2}, {x1} {y2}" id="poly{name}" style="{css}"/>\n'
+    if rotate90:
+        x1, x2 = x, x+width
+        y1, y2, y3, y4 = y, y+l, y+ height-r, y+height
+        if mirror: x1, x2 = x2, x1
+        return f'<polygon points="{x2} {y2}, {x2} {y3}, {x1} {y4}, {x1} {y1}" id="{name}" style="{css}"/>\n'
+    else:
+        x1, x2, x3, x4 = x, x+l, x+ width-r, x+width
+        y1, y2 = y, y+height
+        if mirror: y1, y2 = y2, y1
+        return f'<polygon points="{x2} {y1}, {x3} {y1}, {x4} {y2}, {x1} {y2}" id="{name}" style="{css}"/>\n'
 
 def base():
     l = y/200 * 80
@@ -48,6 +53,8 @@ def base():
 
 def lid():
     svg  = rect('lid', 0, +y +z +thickness*4, x, y)
+    svg += trapezoid('right-flap', +x/2 +z*0.5 +thickness*2, y+z+thickness*4, z, y, z, 0, False, True)
+    svg += trapezoid('left-flap' , -x/2 -z*0.5 -thickness*2, y+z+thickness*4, z, y, z, 0, True , True)
     svg += trapezoid('lid-lock', 0, +y*1.5 +z*1.5 +thickness*5, x+z*2, z -thickness*2, z, z)
     return svg
 
@@ -55,11 +62,11 @@ def main():
     common_x = x + z*4 + thickness*12
     common_y = y*2 + z*3 +thickness*8
     global sheet_x, sheet_y, center_x, center_y
-    if common_x > common_y:
+    if common_x > common_y or common_x > sheet_x-10:
         sheet_x, sheet_y = sheet_y, sheet_x
         center_x = sheet_x/2
         center_y = sheet_y/2
-    center_y = sheet_y -y/2 -z -thickness*2 - 15
+    center_y = sheet_y -y/2 -z -thickness*2 - 5
     if(common_y > sheet_y):
         return False
     if(common_x > sheet_x):

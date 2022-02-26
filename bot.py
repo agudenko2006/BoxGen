@@ -21,7 +21,6 @@ async def setup_cmd(dispatcher):
     ]
     await bot.set_my_commands(bot_commands)
 
-
 @dp.message_handler(commands = 'start')
 async def send_welcome(message: types.Message):
     await message.reply('Hi. I can make and print some box nets for you. Type /set to set the box\'s dimensions.')
@@ -60,7 +59,7 @@ async def print(message: types.Message):
     if not result:
         await message.answer('The box is too large for this printer 😥')
         return
-    #os.system(f'inkscape --without-gui --export-pdf=output.pdf output.svg&&lp -d {printer} output.pdf')
+    os.system(f'inkscape --without-gui --export-pdf=output.pdf output.svg&&lp -d {printer} output.pdf')
     await message.answer('OK')
 
 @dp.message_handler(lambda message: message.text.isdigit())
